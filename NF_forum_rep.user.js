@@ -12,6 +12,7 @@
 // @grant        GM_setValue
 // @grant        GM_getValue
 // @grant        GM_xmlhttpRequest
+// @connect      self
 // ==/UserScript==
 
 let repsInserted = 0;
