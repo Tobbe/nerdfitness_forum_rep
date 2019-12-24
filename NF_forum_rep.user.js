@@ -29,7 +29,6 @@ function fetchRep(url) {
                     resolve(text.match(/<span\s+class=.cProfileRepScore_points.>\s*(\d+)\s*<\/span>/)[1]);
                 } catch (e) {
                     if (triesLeft) {
-                        console.log('--- retries', triesLeft);
                         xhr(resolve, reject, --triesLeft);
                     } else {
                         reject('failure');
@@ -53,7 +52,6 @@ function insertRep(aside, rep) {
 
     if (repInserted) {
         repInserted.innerHTML = 'Rep: ' + rep;
-        console.log('--- updated rep', rep);
     } else {
         aside.querySelectorAll('ul.cAuthorPane_info li').forEach(li => {
             if (li.textContent.endsWith('posts')) {
@@ -63,8 +61,6 @@ function insertRep(aside, rep) {
     }
 
     ++repsInserted;
-
-    console.log('--- ' + repsInserted + ' reps fetched (postsLength === ' + postsLength + ')');
 
     if (repsInserted === postsLength) {
         console.timeEnd('---rep_persistent_caching');
@@ -81,7 +77,6 @@ function insertRep(aside, rep) {
 
     const posts = document.querySelectorAll('aside.ipsComment_author');
     postsLength = posts.length;
-    console.log('--- ' + postsLength + ' posts');
 
     posts.forEach(aside => {
         const url = aside.querySelector('h3.cAuthorPane_author a').href;
@@ -108,8 +103,6 @@ function insertRep(aside, rep) {
             const userId = getUserId(url);
 
             if (cache[userId] !== rep) {
-                console.log('--- update cached rep', userId, cache[userId], rep);
-
                 asides.forEach(aside => {
                     insertRep(aside, rep);
                 });
