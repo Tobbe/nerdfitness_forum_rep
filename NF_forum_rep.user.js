@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         NerdFitness forum rep
 // @namespace    https://github.com/tobbe
-// @version      0.2
+// @version      0.3
 // @description  NerdFitness forum - Display reputation
 // @author       Tobbe
 // @license      MIT
