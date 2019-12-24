@@ -15,9 +15,6 @@
 // @connect      self
 // ==/UserScript==
 
-let repsInserted = 0;
-let postsLength = 0;
-
 function fetchRep(url) {
     function xhr(resolve, reject, triesLeft) {
         GM_xmlhttpRequest({
@@ -60,12 +57,6 @@ function insertRep(aside, rep) {
             }
         });
     }
-
-    ++repsInserted;
-
-    if (repsInserted === postsLength) {
-        console.timeEnd('---rep_persistent_caching');
-    }
 }
 
 (function() {
@@ -74,10 +65,7 @@ function insertRep(aside, rep) {
     const queue = {};
     const cache = GM_getValue('cache');
 
-    console.time('---rep_persistent_caching');
-
     const posts = document.querySelectorAll('aside.ipsComment_author');
-    postsLength = posts.length;
 
     posts.forEach(aside => {
         const url = aside.querySelector('h3.cAuthorPane_author a').href;
