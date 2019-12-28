@@ -82,11 +82,9 @@ function insertRep(aside, rep) {
 
         const cachedRep = cache[userId];
 
-        if (cachedRep) {
-            asides.forEach(aside => {
-                insertRep(aside, cachedRep);
-            });
-        }
+        asides.forEach(aside => {
+            insertRep(aside, cachedRep || 'fetching...');
+        });
 
         fetchRep(url).then(rep => {
             const userId = getUserId(url);
