@@ -16,15 +16,17 @@
 // ==/UserScript==
 
 function fetchRep(url) {
+    const repRegex = /<span\s+class=.cProfileRepScore_points.>\s*(\d+)\s*<\/span>/;
+
     function xhr(resolve, reject, triesLeft) {
         GM_xmlhttpRequest({
-            method: "GET",
+            method: 'GET',
             url: url + 'reputation/',
             onload: response => {
                 const text = response.responseText;
 
                 try {
-                    resolve(text.match(/<span\s+class=.cProfileRepScore_points.>\s*(\d+)\s*<\/span>/)[1]);
+                    resolve(text.match(repRegex)[1]);
                 } catch (e) {
                     if (triesLeft) {
                         xhr(resolve, reject, --triesLeft);
@@ -42,7 +44,10 @@ function fetchRep(url) {
 }
 
 function getUserId(url) {
-    return url.replace(/\/*$/, '').split('/').pop();
+    return url
+        .replace(/\/*$/, '')
+        .split('/')
+        .pop();
 }
 
 function insertRep(aside, rep) {
@@ -53,7 +58,8 @@ function insertRep(aside, rep) {
     } else {
         aside.querySelectorAll('ul.cAuthorPane_info li').forEach(li => {
             if (li.textContent.endsWith('posts')) {
-                li.insertAdjacentHTML('beforebegin', '<li class="rep-inserted">Rep: ' + rep + '</li>');
+                const liStr = '<li class="rep-inserted">Rep: ' + rep + '</li>';
+                li.insertAdjacentHTML('beforebegin', liStr);
             }
         });
     }
@@ -63,11 +69,8 @@ function insertRep(aside, rep) {
     'use strict';
 
     const queue = {};
-    const cache = GM_getValue('cache');
 
-    const posts = document.querySelectorAll('aside.ipsComment_author');
-
-    posts.forEach(aside => {
+    document.querySelectorAll('aside.ipsComment_author').forEach(aside => {
         const url = aside.querySelector('h3.cAuthorPane_author a').href;
 
         if (queue[url]) {
@@ -76,6 +79,8 @@ function insertRep(aside, rep) {
             queue[url] = [aside];
         }
     });
+
+    const cache = GM_getValue('cache');
 
     Object.entries(queue).forEach(([url, asides]) => {
         const userId = getUserId(url);
