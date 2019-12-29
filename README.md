@@ -1,10 +1,11 @@
 NerdFitness forum - Display reputation
 ======================================
 
-Shows each users's reputation in the user sidebar on NerdFitness Rebellion
-forums.
+Shows each users's reputation in the user sidebar, and on the user's profile
+page, on NerdFitness Rebellion forums.
 
-![Screenshot](docs/images/nf_rep.png)
+![Screenshot Topic](docs/images/nf_rep.png)
+![Screenshot Profile](docs/images/profile_rep.png)
 
 The script will cache reputation scores locally for each user, so the first
 time you run the script and/or the first time you see a post from a new user it
