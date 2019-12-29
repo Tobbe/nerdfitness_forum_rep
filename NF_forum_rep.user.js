@@ -23,7 +23,7 @@ function fetchRep(url) {
         if (triesLeft) {
             setTimeout(() => {
                 xhr(resolve, reject, triesLeft - 1);
-            }, 6000);
+            }, 10000 - triesLeft * 1000);
         } else {
             reject('failure');
         }
