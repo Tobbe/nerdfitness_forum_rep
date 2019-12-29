@@ -65,9 +65,7 @@ function insertRep(aside, rep) {
     }
 }
 
-(function() {
-    'use strict';
-
+function enqueueAsides() {
     const queue = {};
 
     document.querySelectorAll('aside.ipsComment_author').forEach(aside => {
@@ -80,17 +78,25 @@ function insertRep(aside, rep) {
         }
     });
 
+    return queue;
+}
+
+function displayForumRep() {
+    const queue = enqueueAsides();
     const cache = GM_getValue('cache');
 
     Object.entries(queue).forEach(([url, asides]) => {
         const userId = getUserId(url);
 
-        const cachedRep = cache[userId];
-
+        // insert reps from cache
+        // if we don't have a cached rep for this userId, print 'fetching...'
+        // instead
         asides.forEach(aside => {
-            insertRep(aside, cachedRep || 'fetching...');
+            insertRep(aside, cache[userId] || 'fetching...');
         });
 
+        // cached reps from above might be old, so fetch the latest reps and
+        // update the displayed value
         fetchRep(url).then(rep => {
             const userId = getUserId(url);
 
@@ -105,4 +111,10 @@ function insertRep(aside, rep) {
             }
         });
     });
+}
+
+(function() {
+    'use strict';
+
+    updateForumRep();
 })();
