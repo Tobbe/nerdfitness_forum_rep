@@ -58,7 +58,7 @@ function insertRep(aside, rep) {
         repInserted.innerHTML = 'Rep: ' + rep;
     } else {
         aside.querySelectorAll('ul.cAuthorPane_info li').forEach(li => {
-            if (li.textContent.endsWith('posts')) {
+            if (li.textContent.match(/posts?$/)) {
                 const liStr = '<li class="rep-inserted">Rep: ' + rep + '</li>';
                 li.insertAdjacentHTML('beforebegin', liStr);
             }
