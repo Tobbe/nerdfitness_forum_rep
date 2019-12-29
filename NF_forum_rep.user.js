@@ -19,6 +19,16 @@
 function fetchRep(url) {
     const repRegex = /<span\s+class=.cProfileRepScore_points.>\s*(\d+)\s*<\/span>/;
 
+    function retry(triesLeft, resolve, reject) {
+        if (triesLeft) {
+            setTimeout(() => {
+                xhr(resolve, reject, triesLeft - 1);
+            }, 6000);
+        } else {
+            reject('failure');
+        }
+    }
+
     function xhr(resolve, reject, triesLeft) {
         GM_xmlhttpRequest({
             method: 'GET',
@@ -26,15 +36,22 @@ function fetchRep(url) {
             onload: response => {
                 const text = response.responseText;
 
-                try {
-                    resolve(text.match(repRegex)[1]);
-                } catch (e) {
-                    if (triesLeft) {
-                        xhr(resolve, reject, --triesLeft);
-                    } else {
-                        reject('failure');
+                if (response.status !== 200) {
+                    retry(triesLeft, resolve, reject);
+                } else {
+                    try {
+                        const rep = text.match(repRegex)[1];
+                        resolve(rep);
+                    } catch (e) {
+                        retry(triesLeft, resolve, reject);
                     }
                 }
+            },
+            onerror: () => {
+                retry(triesLeft, resolve, reject);
+            },
+            ontimeout: () => {
+                retry(triesLeft, resolve, reject);
             },
         });
     }
@@ -98,19 +115,25 @@ function displayForumRep() {
 
         // cached reps from above might be old, so fetch the latest reps and
         // update the displayed value
-        fetchRep(url).then(rep => {
-            const userId = getUserId(url);
+        fetchRep(url)
+            .then(rep => {
+                const userId = getUserId(url);
 
-            if (cache[userId] !== rep) {
+                if (cache[userId] !== rep) {
+                    asides.forEach(aside => {
+                        insertRep(aside, rep);
+                    });
+
+                    cache[userId] = rep;
+
+                    GM_setValue('cache', cache);
+                }
+            })
+            .catch(e => {
                 asides.forEach(aside => {
-                    insertRep(aside, rep);
+                    insertRep(aside, 'unknown');
                 });
-
-                cache[userId] = rep;
-
-                GM_setValue('cache', cache);
-            }
-        });
+            });
     });
 }
 
