@@ -100,6 +100,12 @@ function enqueueAsides() {
 }
 
 function displayForumRep() {
+    const url = window.location.href;
+
+    if (!url.match(/index.php\?\/topic\//)) {
+        return;
+    }
+
     const queue = enqueueAsides();
     const cache = GM_getValue('cache');
 
@@ -139,6 +145,10 @@ function displayForumRep() {
 
 function displayProfileRep() {
     const url = window.location.href;
+
+    if (!url.match(/index.php\?\/profile\//)) {
+        return;
+    }
 
     fetchRep(url).then(rep => {
         document.querySelectorAll('#elProfileStats li').forEach(li => {
