@@ -8,6 +8,7 @@
 // @match        https://rebellion.nerdfitness.com/index.php?/topic/*
 // @exclude      https://rebellion.nerdfitness.com/index.php?/topic/*&do=embed
 // @exclude      https://rebellion.nerdfitness.com/index.php?/topic/*&do=embed&*
+// @match        https://rebellion.nerdfitness.com/index.php?/profile/*/
 // @grant        GM_listValues
 // @grant        GM_setValue
 // @grant        GM_getValue
@@ -113,8 +114,26 @@ function displayForumRep() {
     });
 }
 
+function displayProfileRep() {
+    const url = window.location.href;
+
+    fetchRep(url).then(rep => {
+        document.querySelectorAll('#elProfileStats li').forEach(li => {
+            if (li.textContent.indexOf('Content Count') !== -1) {
+                const liStr = `
+                    <li>
+                        <h4 class="ipsType_minorHeading">Reputation</h4>
+                        ${rep}
+                    </li>`;
+                li.insertAdjacentHTML('afterend', liStr);
+            }
+        });
+    });
+}
+
 (function() {
     'use strict';
 
-    updateForumRep();
+    displayForumRep();
+    displayProfileRep();
 })();
